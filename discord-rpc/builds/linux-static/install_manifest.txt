@@ -1,0 +1,3 @@
+/home/xenhat/code/vwr/libs/discord-rpc/discord-rpc/builds/install/linux-static/lib/libdiscord-rpc.a
+/home/xenhat/code/vwr/libs/discord-rpc/discord-rpc/builds/install/linux-static/include/discord_rpc.h
+/home/xenhat/code/vwr/libs/discord-rpc/discord-rpc/builds/install/linux-static/include/discord_register.h
