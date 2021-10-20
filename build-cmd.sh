@@ -13,7 +13,8 @@ echo "1.0" > VERSION.txt
 # case "$AUTOBUILD_PLATFORM" in
 	# linux*)
 		../discord-rpc/build.py --clean
-		cp -r ../discord-rpc/builds/install/linux-static/include ./
+		mkdir -p include
+		cp -r ../discord-rpc/builds/install/linux-static/include ./include/discord_rpc
 		mkdir -p lib
 		cp -r ../discord-rpc/builds/install/linux-static/lib ./lib/release
 		mkdir LICENSES -p
@@ -25,8 +26,8 @@ echo "1.0" > VERSION.txt
 		# Maybe make one package for each architecture and
 		# copy the relevant libs then?
 		# cp -r "../discord/lib/x86_64" "lib/release"
-		autobuild manifest add include/*
-		autobuild manifest add lib/*
+		autobuild manifest add include/discord_rpc/*
+		autobuild manifest add lib/release/*
 		autobuild manifest add LICENSES/*
 		autobuild manifest add VERSION.txt
 		
