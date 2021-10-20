@@ -1,1 +1,3 @@
 *.tar.*
+discord-rpc/builds/
+stage/

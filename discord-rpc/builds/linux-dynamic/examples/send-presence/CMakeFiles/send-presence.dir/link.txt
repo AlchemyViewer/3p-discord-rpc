@@ -1,1 +1,0 @@
-/usr/lib/ccache/bin/cc -rdynamic CMakeFiles/send-presence.dir/send-presence.c.o -o send-presence  -Wl,-rpath,/home/xenhat/code/vwr/libs/discord-rpc/discord-rpc/builds/linux-dynamic/src: ../../src/libdiscord-rpc.so -lpthread 

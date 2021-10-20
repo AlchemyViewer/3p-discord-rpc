@@ -1,1 +1,0 @@
-/usr/lib/ccache/bin/c++ -rdynamic CMakeFiles/send-presence.dir/send-presence.c.o -o send-presence  ../../src/libdiscord-rpc.a -lpthread 

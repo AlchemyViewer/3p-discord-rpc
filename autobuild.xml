@@ -40,9 +40,11 @@
           </map>
           <key>manifest</key>
           <array>
-            <string>include/discord_register.h</string>
-            <string>include/discord_rpc.h</string>
-            <string>lib/libdiscord-rpc.a</string>
+            <string>include/discord_rpc/discord_register.h</string>
+            <string>include/discord_rpc/discord_rpc.h</string>
+            <string>include/discord_rpc/include</string>
+            <string>lib/release/lib</string>
+            <string>lib/release/libdiscord-rpc.a</string>
             <string>LICENSES/discord_rpc.txt</string>
             <string>VERSION.txt</string>
           </array>
