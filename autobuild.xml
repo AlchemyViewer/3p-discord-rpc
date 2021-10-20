@@ -4,7 +4,7 @@
     <key>package_description</key>
     <map>
       <key>canonical_repo</key>
-      <string>https://git.alchemyviewer.org/alchemy/thirdpartyprivate/3p-discord-rpc</string>
+      <string>https://git.alchemyviewer.org/alchemy/thirdparty/3p-discord-rpc</string>
       <key>copyright</key>
       <string>Copyright (c) 2017, Discord, Inc.</string>
       <key>license</key>
