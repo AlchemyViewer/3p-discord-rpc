@@ -9,15 +9,17 @@ set -e
 # complain about unset env variables
 set -u
 
+PROJECT=discord_rpc
+
 if [ -z "$AUTOBUILD" ] ; then
     exit 1
 fi
 
-#if [ "$OSTYPE" = "cygwin" ] ; then
-#    autobuild="$(cygpath -u $AUTOBUILD)"
-#else
+if [ "$OSTYPE" = "cygwin" ] ; then
+   autobuild="$(cygpath -u $AUTOBUILD)"
+else
     autobuild="$AUTOBUILD"
-#fi
+fi
 
 SOURCE_DIR="discord-rpc"
 BUILD_DIR="builds"
@@ -26,12 +28,11 @@ top="$(pwd)"
 stage="$(pwd)/stage"
 
 # load autobuild provided shell functions and variables
-# source_environment_tempfile="$stage/source_environment.sh"
-# "$autobuild" source_environment > "$source_environment_tempfile"
-# . "$source_environment_tempfile"
+source_environment_tempfile="$stage/source_environment.sh"
+"$autobuild" source_environment > "$source_environment_tempfile"
+. "$source_environment_tempfile"
 
 echo "3.4.0" > VERSION.txt
-
 
 pushd "$SOURCE_DIR"
     case "$AUTOBUILD_PLATFORM" in
@@ -93,13 +94,13 @@ pushd "$SOURCE_DIR"
 
 						./build.py --clean
 						mkdir -p $stage/include
-            cp -r builds/install/linux-static/include $stage/include/discord_rpc
+            cp -r builds/install/linux-static/include $stage/include/${PROJECT}
 						mkdir -p $stage/lib
 						cp -r builds/install/linux-static/lib/* $stage/lib/release
         ;;
     esac
 
 	mkdir -p "$stage/LICENSES"
-	cp "LICENSE" "$stage/LICENSES/discord_rpc.txt"
+	cp "LICENSE" "$stage/LICENSES/${PROJECT}.txt"
 	cp ../VERSION.txt "$stage/"
 popd
