@@ -13,11 +13,11 @@ if [ -z "$AUTOBUILD" ] ; then
     exit 1
 fi
 
-if [ "$OSTYPE" = "cygwin" ] ; then
-    autobuild="$(cygpath -u $AUTOBUILD)"
-else
+#if [ "$OSTYPE" = "cygwin" ] ; then
+#    autobuild="$(cygpath -u $AUTOBUILD)"
+#else
     autobuild="$AUTOBUILD"
-fi
+#fi
 
 SOURCE_DIR="discord-rpc"
 BUILD_DIR="builds"
