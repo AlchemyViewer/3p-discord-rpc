@@ -81,6 +81,11 @@
               <string>default</string>
             </map>
           </map>
+          <key>manifest</key>
+          <array>
+            <string>lib/discord_rpc/*</string>
+            <string>include/discord_rpc/*</string>
+          </array>
           <key>name</key>
           <string>linux</string>
         </map>

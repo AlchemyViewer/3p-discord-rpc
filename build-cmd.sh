@@ -119,7 +119,7 @@ pushd "$SOURCE_DIR"
                     -DCMAKE_CXX_STANDARD=17 \
                     -DCMAKE_C_FLAGS="$DEBUG_CFLAGS" \
                     -DCMAKE_CXX_FLAGS="$DEBUG_CXXFLAGS" \
-                    -DCMAKE_INSTALL_PREFIX="$stage/${PROJECT}/debug"
+                    -DCMAKE_INSTALL_PREFIX="$stage/lib/${PROJECT}/debug"
 
                 cmake --build . --config Debug --parallel $AUTOBUILD_CPU_COUNT
 
@@ -129,6 +129,9 @@ pushd "$SOURCE_DIR"
                 #fi
                 
                 cmake --install . --config Debug
+                
+                # FIXME: Delete files that shouldn't be there
+                rm -r "$stage/lib/${PROJECT}/debug/include"
             popd
 
             # Release
@@ -140,7 +143,7 @@ pushd "$SOURCE_DIR"
                     -DCMAKE_CXX_STANDARD=17 \
                     -DCMAKE_C_FLAGS="$RELEASE_CFLAGS" \
                     -DCMAKE_CXX_FLAGS="$RELEASE_CXXFLAGS" \
-                    -DCMAKE_INSTALL_PREFIX="$stage/${PROJECT}/release"
+                    -DCMAKE_INSTALL_PREFIX="$stage/lib/${PROJECT}/release"
 
                 cmake --build . --config Release --parallel $AUTOBUILD_CPU_COUNT
 
@@ -150,6 +153,10 @@ pushd "$SOURCE_DIR"
             #     #fi
 
                 cmake --install . --config Release
+                
+                # FIXME: Temporary workaround for files in the wrong folder
+                mkdir -p "$stage/include/"
+                mv "$stage/lib/${PROJECT}/release/include" "$stage/include/${PROJECT}"
             popd
         ;;
     esac
