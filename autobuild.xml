@@ -39,8 +39,6 @@
           </map>
           <key>manifest</key>
           <array>
-            <string>include/discord_rpc/discord_register.h</string>
-            <string>include/discord_rpc/discord_rpc.h</string>
             <string>LICENSES/discord_rpc.txt</string>
           </array>
           <key>name</key>
@@ -83,10 +81,6 @@
               <string>default</string>
             </map>
           </map>
-          <key>manifest</key>
-          <array>
-            <string>lib/release/libdiscord-rpc.a</string>
-          </array>
           <key>name</key>
           <string>linux</string>
         </map>

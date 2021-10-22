@@ -34,8 +34,6 @@ source_environment_tempfile="$stage/source_environment.sh"
 
 echo "3.4.0" > "$stage/VERSION.txt"
 
-mkdir -p "$stage/include/discord_rpc"
-
 pushd "$SOURCE_DIR"
     case "$AUTOBUILD_PLATFORM" in
         windows*)
@@ -68,7 +66,8 @@ pushd "$SOURCE_DIR"
           echo "Darwin build not implemented yet!"
           exit 1
         ;;
-    
+        
+        # -------------------------- linux, linux64 --------------------------
         linux*)
             # Linux build environment at Linden comes pre-polluted with stuff that can
             # seriously damage 3rd-party builds.  Environmental garbage you can expect
@@ -83,35 +82,77 @@ pushd "$SOURCE_DIR"
             # So, clear out bits that shouldn't affect our configure-directed build
             # but which do nonetheless.
             #
-            unset DISTCC_HOSTS CC CXX CFLAGS CPPFLAGS CXXFLAGS
-            
-            # Default target per --address-size
-            opts="${TARGET_OPTS:--m$AUTOBUILD_ADDRSIZE}"
-            #DEBUG_COMMON_FLAGS="$opts -Og -g -fPIC"
-            RELEASE_COMMON_FLAGS="$opts -O3 -g -fPIC -fstack-protector-strong"
-            #DEBUG_CFLAGS="$DEBUG_COMMON_FLAGS"
-            RELEASE_CFLAGS="$RELEASE_COMMON_FLAGS"
-            #DEBUG_CXXFLAGS="$DEBUG_COMMON_FLAGS -std=c++17"
-            RELEASE_CXXFLAGS="$RELEASE_COMMON_FLAGS -std=c++17"
-            #DEBUG_CPPFLAGS="-DPIC"
-            RELEASE_CPPFLAGS="-DPIC -D_FORTIFY_SOURCE=2"
-            
-            mkdir -p "$stage/lib/release"
-            mkdir -p "$stage/lib/debug"
-            
-            CFLAGS="$RELEASE_CFLAGS"
-            CXXFLAGS="$RELEASE_CXXFLAGS"
-            CPPFLAGS="$RELEASE_CPPFLAGS -I$stage/packages/include"
-            LDFLAGS="-L$stage/packages/lib/release/"
+            unset DISTCC_HOSTS CFLAGS CPPFLAGS CXXFLAGS
 
-            ./build.py --clean
-            mkdir -p $stage/lib
-            cp -r builds/install/linux-static/lib/* $stage/lib/release
+            # Default target per autobuild build --address-size
+            opts="${TARGET_OPTS:--m$AUTOBUILD_ADDRSIZE}"
+            SIMD_FLAGS="-msse -msse2 -msse3 -mssse3 -msse4 -msse4.1 -msse4.2 -mcx16 -mpopcnt -mpclmul -maes"
+            DEBUG_COMMON_FLAGS="$opts -Og -g -fPIC -DPIC $SIMD_FLAGS"
+            RELEASE_COMMON_FLAGS="$opts -O3 -g -fPIC -DPIC -fstack-protector-strong -D_FORTIFY_SOURCE=2 $SIMD_FLAGS"
+            DEBUG_CFLAGS="$DEBUG_COMMON_FLAGS"
+            RELEASE_CFLAGS="$RELEASE_COMMON_FLAGS"
+            DEBUG_CXXFLAGS="$DEBUG_COMMON_FLAGS -std=c++17"
+            RELEASE_CXXFLAGS="$RELEASE_COMMON_FLAGS -std=c++17"
+            DEBUG_CPPFLAGS="-DPIC"
+            RELEASE_CPPFLAGS="-DPIC -D_FORTIFY_SOURCE=2"
+
+            # Handle any deliberate platform targeting
+            if [ -z "${TARGET_CPPFLAGS:-}" ]; then
+                # Remove sysroot contamination from build environment
+                unset CPPFLAGS
+            else
+                # Incorporate special pre-processing flags
+                export CPPFLAGS="$TARGET_CPPFLAGS"
+            fi
+
+            # mkdir -p "$stage/lib/debug"
+            # mkdir -p "$stage/lib/release"
+
+            # Debug
+            # mkdir -p "build"
+            # pushd "build"
+            mkdir -p "build_debug"
+            pushd "build_debug"
+                cmake ../ -G"Ninja" \
+                    -DCMAKE_BUILD_TYPE=Debug \
+                    -DBUILD_SHARED_LIBS:BOOL=OFF \
+                    -DCMAKE_CXX_STANDARD=17 \
+                    -DCMAKE_C_FLAGS="$DEBUG_CFLAGS" \
+                    -DCMAKE_CXX_FLAGS="$DEBUG_CXXFLAGS" \
+                    -DCMAKE_INSTALL_PREFIX="$stage/${PROJECT}/debug"
+
+                cmake --build . --config Debug --parallel $AUTOBUILD_CPU_COUNT
+
+                # conditionally run unit tests
+                #if [ "${DISABLE_UNIT_TESTS:-0}" = "0" ]; then
+                #    ctest -C Release
+                #fi
+                
+                cmake --install . --config Debug
+            popd
+
+            # Release
+            mkdir -p "build_release"
+            pushd "build_release"
+                cmake ../ -G"Ninja" \
+                    -DCMAKE_BUILD_TYPE=Release \
+                    -DBUILD_SHARED_LIBS:BOOL=OFF \
+                    -DCMAKE_CXX_STANDARD=17 \
+                    -DCMAKE_C_FLAGS="$RELEASE_CFLAGS" \
+                    -DCMAKE_CXX_FLAGS="$RELEASE_CXXFLAGS" \
+                    -DCMAKE_INSTALL_PREFIX="$stage/${PROJECT}/release"
+
+                cmake --build . --config Release --parallel $AUTOBUILD_CPU_COUNT
+
+            #     # conditionally run unit tests
+            #     #if [ "${DISABLE_UNIT_TESTS:-0}" = "0" ]; then
+            #     #    ctest -C Release
+            #     #fi
+
+                cmake --install . --config Release
+            popd
         ;;
     esac
-
-    cp -a "include/discord_rpc.h" "$stage/include/discord_rpc"
-	cp -a "include/discord_register.h" "$stage/include/discord_rpc"
 
   mkdir -p "$stage/LICENSES"
   cp "LICENSE" "$stage/LICENSES/${PROJECT}.txt"
