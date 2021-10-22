@@ -46,17 +46,17 @@ pushd "$SOURCE_DIR"
             if [ "$AUTOBUILD_ADDRSIZE" = 32 ]
             then
                 echo "32bit builds not supported!"
-								exit 1
+                exit 1
             else
-							echo "64bit build not implemented yet"
-							exit 1
+              echo "64bit build not implemented yet"
+              exit 1
                 targetarch=x64
             fi
         ;;
     
         darwin*)
-					echo "Darwin build not implemented yet!"
-					exit 1
+          echo "Darwin build not implemented yet!"
+          exit 1
         ;;
     
         linux*)
@@ -94,15 +94,15 @@ pushd "$SOURCE_DIR"
             CPPFLAGS="$RELEASE_CPPFLAGS -I$stage/packages/include"
             LDFLAGS="-L$stage/packages/lib/release/"
 
-						./build.py --clean
-						mkdir -p $stage/include
+            ./build.py --clean
+            mkdir -p $stage/include
             cp -r builds/install/linux-static/include $stage/include/${PROJECT}
-						mkdir -p $stage/lib
-						cp -r builds/install/linux-static/lib/* $stage/lib/release
+            mkdir -p $stage/lib
+            cp -r builds/install/linux-static/lib/* $stage/lib/release
         ;;
     esac
 
-	mkdir -p "$stage/LICENSES"
-	cp "LICENSE" "$stage/LICENSES/${PROJECT}.txt"
-	cp ../VERSION.txt "$stage/"
+  mkdir -p "$stage/LICENSES"
+  cp "LICENSE" "$stage/LICENSES/${PROJECT}.txt"
+  cp ../VERSION.txt "$stage/"
 popd
