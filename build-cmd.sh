@@ -7,7 +7,7 @@ exec 4>&1; export BASH_XTRACEFD=4; set -x
 # make errors fatal
 set -e
 # complain about unset env variables
-# set -u
+set -u
 
 PROJECT=discord_rpc
 
@@ -32,24 +32,36 @@ source_environment_tempfile="$stage/source_environment.sh"
 "$autobuild" source_environment > "$source_environment_tempfile"
 . "$source_environment_tempfile"
 
-echo "3.4.0" > VERSION.txt
+echo "3.4.0" > "$stage/VERSION.txt"
+
+mkdir -p "$stage/include/discord_rpc"
 
 pushd "$SOURCE_DIR"
     case "$AUTOBUILD_PLATFORM" in
         windows*)
             load_vsvars
 
-            packages="$(cygpath -m "$stage/packages")"
 
-            if [ "$AUTOBUILD_ADDRSIZE" = 32 ]
-            then
-                echo "32bit builds not supported!"
-                exit 1
-            else
-              echo "64bit build not implemented yet"
-              exit 1
-                targetarch=x64
-            fi
+            mkdir -p "$stage/lib/debug"
+            mkdir -p "$stage/lib/release"
+
+            mkdir -p "build"
+            pushd "build"
+                # Invoke cmake and use as official build
+                cmake -G "$AUTOBUILD_WIN_CMAKE_GEN" -A "$AUTOBUILD_WIN_VSPLATFORM" -T host="$AUTOBUILD_WIN_VSHOST" .. -DBUILD_SHARED_LIBS=OFF -DBUILD_EXAMPLES=OFF -DUSE_STATIC_CRT=OFF
+
+                cmake --build . --config Debug
+                cmake --build . --config Release
+
+                # conditionally run unit tests
+                if [ "${DISABLE_UNIT_TESTS:-0}" = "0" ]; then
+                    ctest -C Debug
+                    ctest -C Release
+                fi
+
+                cp -a "src/Debug/discord-rpc.lib" "$stage/lib/debug/discord-rpc.lib"
+                cp -a "src/Release/discord-rpc.lib" "$stage/lib/release/discord-rpc.lib"
+            popd
         ;;
     
         darwin*)
@@ -93,14 +105,14 @@ pushd "$SOURCE_DIR"
             LDFLAGS="-L$stage/packages/lib/release/"
 
             ./build.py --clean
-            mkdir -p $stage/include
-            cp -r builds/install/linux-static/include $stage/include/${PROJECT}
             mkdir -p $stage/lib
             cp -r builds/install/linux-static/lib/* $stage/lib/release
         ;;
     esac
 
+    cp -a "include/discord_rpc.h" "$stage/include/discord_rpc"
+	cp -a "include/discord_register.h" "$stage/include/discord_rpc"
+
   mkdir -p "$stage/LICENSES"
   cp "LICENSE" "$stage/LICENSES/${PROJECT}.txt"
-  cp ../VERSION.txt "$stage/"
 popd

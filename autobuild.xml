@@ -15,7 +15,7 @@
       <string>discord_rpc</string>
       <key>platforms</key>
       <map>
-        <key>linux64</key>
+        <key>common</key>
         <map>
           <key>build_directory</key>
           <string>stage</string>
@@ -25,15 +25,14 @@
             <map>
               <key>build</key>
               <map>
-                <key>arguments</key>
+                <key>command</key>
+                <string>bash</string>
+                <key>options</key>
                 <array>
+                  <string>-c</string>
                   <string>../build-cmd.sh</string>
                 </array>
-                <key>command</key>
-                <string>sh</string>
               </map>
-              <key>default</key>
-              <string>True</string>
               <key>name</key>
               <string>default</string>
             </map>
@@ -42,12 +41,77 @@
           <array>
             <string>include/discord_rpc/discord_register.h</string>
             <string>include/discord_rpc/discord_rpc.h</string>
-            <string>lib/release/libdiscord-rpc.a</string>
             <string>LICENSES/discord_rpc.txt</string>
-            <string>VERSION.txt</string>
           </array>
           <key>name</key>
-          <string>linux64</string>
+          <string>common</string>
+        </map>
+        <key>darwin</key>
+        <map>
+          <key>configurations</key>
+          <map>
+            <key>default</key>
+            <map>
+              <key>build</key>
+              <map>
+              </map>
+              <key>default</key>
+              <string>true</string>
+              <key>name</key>
+              <string>default</string>
+            </map>
+          </map>
+          <key>manifest</key>
+          <array>
+            <string>lib/release/*.a</string>
+          </array>
+          <key>name</key>
+          <string>darwin</string>
+        </map>
+        <key>linux</key>
+        <map>
+          <key>configurations</key>
+          <map>
+            <key>default</key>
+            <map>
+              <key>build</key>
+              <map>
+              </map>
+              <key>default</key>
+              <string>true</string>
+              <key>name</key>
+              <string>default</string>
+            </map>
+          </map>
+          <key>manifest</key>
+          <array>
+            <string>lib/release/libdiscord-rpc.a</string>
+          </array>
+          <key>name</key>
+          <string>linux</string>
+        </map>
+        <key>windows</key>
+        <map>
+          <key>configurations</key>
+          <map>
+            <key>default</key>
+            <map>
+              <key>build</key>
+              <map>
+              </map>
+              <key>default</key>
+              <string>true</string>
+              <key>name</key>
+              <string>default</string>
+            </map>
+          </map>
+          <key>manifest</key>
+          <array>
+            <string>lib/debug/*.*</string>
+            <string>lib/release/*.*</string>
+          </array>
+          <key>name</key>
+          <string>windows</string>
         </map>
       </map>
       <key>version_file</key>

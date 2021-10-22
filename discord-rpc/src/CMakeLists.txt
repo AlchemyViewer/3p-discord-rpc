@@ -41,7 +41,7 @@ if(WIN32)
                 string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
             endforeach()
         endif(USE_STATIC_CRT)
-        target_compile_options(discord-rpc PRIVATE /EHsc
+        target_compile_options(discord-rpc PRIVATE /EHsc /Z7
             /Wall
             /wd4100 # unreferenced formal parameter
             /wd4514 # unreferenced inline
