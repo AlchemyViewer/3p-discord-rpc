@@ -7,7 +7,7 @@ exec 4>&1; export BASH_XTRACEFD=4; set -x
 # make errors fatal
 set -e
 # complain about unset env variables
-set -u
+# set -u
 
 PROJECT=discord_rpc
 
