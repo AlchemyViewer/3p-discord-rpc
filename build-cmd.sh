@@ -26,9 +26,9 @@ top="$(pwd)"
 stage="$(pwd)/stage"
 
 # load autobuild provided shell functions and variables
-source_environment_tempfile="$stage/source_environment.sh"
-"$autobuild" source_environment > "$source_environment_tempfile"
-. "$source_environment_tempfile"
+# source_environment_tempfile="$stage/source_environment.sh"
+# "$autobuild" source_environment > "$source_environment_tempfile"
+# . "$source_environment_tempfile"
 
 echo "3.4.0" > VERSION.txt
 
