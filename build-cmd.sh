@@ -104,13 +104,9 @@ pushd "$SOURCE_DIR"
                 # Incorporate special pre-processing flags
                 export CPPFLAGS="$TARGET_CPPFLAGS"
             fi
-
-            # mkdir -p "$stage/lib/debug"
-            # mkdir -p "$stage/lib/release"
-
-            # Debug
-            # mkdir -p "build"
-            # pushd "build"
+            # clean up directories
+            rm -rf "${stage:?}/lib"
+            rm -rf "${stage:?}/include"
             mkdir -p "build_debug"
             pushd "build_debug"
                 cmake ../ -G"Ninja" \
@@ -119,7 +115,7 @@ pushd "$SOURCE_DIR"
                     -DCMAKE_CXX_STANDARD=17 \
                     -DCMAKE_C_FLAGS="$DEBUG_CFLAGS" \
                     -DCMAKE_CXX_FLAGS="$DEBUG_CXXFLAGS" \
-                    -DCMAKE_INSTALL_PREFIX="$stage/lib/${PROJECT}/debug"
+                    -DCMAKE_INSTALL_PREFIX="$stage/debug"
 
                 cmake --build . --config Debug --parallel $AUTOBUILD_CPU_COUNT
 
@@ -131,7 +127,10 @@ pushd "$SOURCE_DIR"
                 cmake --install . --config Debug
                 
                 # FIXME: Delete files that shouldn't be there
-                rm -r "$stage/lib/${PROJECT}/debug/include"
+                # rm -r "$stage/include"
+                # Move files to the right place
+                mkdir -p "$stage/lib"
+                mv "$stage/debug/lib" "$stage/lib/debug"
             popd
 
             # Release
@@ -143,7 +142,7 @@ pushd "$SOURCE_DIR"
                     -DCMAKE_CXX_STANDARD=17 \
                     -DCMAKE_C_FLAGS="$RELEASE_CFLAGS" \
                     -DCMAKE_CXX_FLAGS="$RELEASE_CXXFLAGS" \
-                    -DCMAKE_INSTALL_PREFIX="$stage/lib/${PROJECT}/release"
+                    -DCMAKE_INSTALL_PREFIX="$stage/release"
 
                 cmake --build . --config Release --parallel $AUTOBUILD_CPU_COUNT
 
@@ -156,7 +155,8 @@ pushd "$SOURCE_DIR"
                 
                 # FIXME: Temporary workaround for files in the wrong folder
                 mkdir -p "$stage/include/"
-                mv "$stage/lib/${PROJECT}/release/include" "$stage/include/${PROJECT}"
+                mv "$stage/release/include" "$stage/include/${PROJECT}"
+                mv "$stage/release/lib" "$stage/lib/release"
             popd
         ;;
     esac

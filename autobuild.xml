@@ -83,8 +83,9 @@
           </map>
           <key>manifest</key>
           <array>
-            <string>lib/discord_rpc/*</string>
             <string>include/discord_rpc/*</string>
+            <string>lib/release/*</string>
+            <string>lib/debug/*</string>
           </array>
           <key>name</key>
           <string>linux</string>
